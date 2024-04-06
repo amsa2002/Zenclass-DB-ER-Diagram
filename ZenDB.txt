@@ -1,0 +1,162 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema zenclass
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema zenclass
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `zenclass` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `zenclass` ;
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`students`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`students` (
+  `student_id` INT NOT NULL,
+  `student_name` VARCHAR(255) NULL DEFAULT NULL,
+  `email_address` VARCHAR(255) NULL DEFAULT NULL,
+  `student_mobile` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`student_id`),
+  UNIQUE INDEX `email_address` (`email_address` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`course`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`course` (
+  `course_id` INT NOT NULL,
+  `student_id` INT NULL DEFAULT NULL,
+  `course_name` VARCHAR(25) NULL DEFAULT NULL,
+  `course_duration` VARCHAR(255) NULL DEFAULT NULL,
+  `course_fees` VARCHAR(25) NULL DEFAULT NULL,
+  PRIMARY KEY (`course_id`),
+  INDEX `student_id` (`student_id` ASC) VISIBLE,
+  CONSTRAINT `course_ibfk_1`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `zenclass`.`students` (`student_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`admissions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`admissions` (
+  `student_id` INT NULL DEFAULT NULL,
+  `course_id` INT NULL DEFAULT NULL,
+  `admission_fees` VARCHAR(25) NULL DEFAULT NULL,
+  INDEX `student_id` (`student_id` ASC) VISIBLE,
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `admissions_ibfk_1`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `zenclass`.`students` (`student_id`),
+  CONSTRAINT `admissions_ibfk_2`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `zenclass`.`course` (`course_id`))
+ENGINE = ndbcluster
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`attendance`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`attendance` (
+  `attendance_id` INT NULL DEFAULT NULL,
+  `student_id` INT NULL DEFAULT NULL,
+  `attendance` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` TINYINT(1) NULL DEFAULT '1',
+  INDEX `student_id` (`student_id` ASC) VISIBLE,
+  CONSTRAINT `attendance_ibfk_1`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `zenclass`.`students` (`student_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`codekata`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`codekata` (
+  `student_id` INT NULL DEFAULT NULL,
+  `solved_problem` VARCHAR(25) NOT NULL,
+  INDEX `student_id` (`student_id` ASC) VISIBLE,
+  CONSTRAINT `codekata_ibfk_1`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `zenclass`.`students` (`student_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`dashboard`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`dashboard` (
+  `student_id` INT NULL DEFAULT NULL,
+  `course_id` INT NULL DEFAULT NULL,
+  `batch` VARCHAR(25) NOT NULL,
+  `submited_task` VARCHAR(25) NOT NULL,
+  INDEX `student_id` (`student_id` ASC) VISIBLE,
+  INDEX `course_id` (`course_id` ASC) VISIBLE,
+  CONSTRAINT `dashboard_ibfk_1`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `zenclass`.`students` (`student_id`),
+  CONSTRAINT `dashboard_ibfk_2`
+    FOREIGN KEY (`course_id`)
+    REFERENCES `zenclass`.`course` (`course_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`queries`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`queries` (
+  `student_id` INT NULL DEFAULT NULL,
+  `topics` VARCHAR(2000) NULL DEFAULT NULL,
+  `reasons_queries` VARCHAR(2550) NULL DEFAULT NULL,
+  INDEX `student_id` (`student_id` ASC) VISIBLE,
+  CONSTRAINT `queries_ibfk_1`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `zenclass`.`students` (`student_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `zenclass`.`tasks`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `zenclass`.`tasks` (
+  `student_id` INT NULL DEFAULT NULL,
+  `task_name` VARCHAR(200) NULL DEFAULT NULL,
+  `status` TINYINT(1) NULL DEFAULT '1',
+  `task_mark` VARCHAR(10) NULL DEFAULT NULL,
+  INDEX `student_id` (`student_id` ASC) VISIBLE,
+  CONSTRAINT `tasks_ibfk_1`
+    FOREIGN KEY (`student_id`)
+    REFERENCES `zenclass`.`students` (`student_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
